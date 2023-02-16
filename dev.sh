@@ -29,6 +29,7 @@ case $1 in
         docker run -it --rm \
             -e XDG_CACHE_HOME="/ws"\
             --mount type=bind,source="$HERE/test",target="/ws" \
+            --mount type=bind,source="$HERE/test/checkm_db",target="/checkm_db" \
             --workdir="/ws" \
             -u $(id -u):$(id -g) \
             $DOCKER_IMAGE \

@@ -17,6 +17,7 @@ ENV CONDA_ENV "smk"
 COPY --from=build-env /opt/conda/envs/${CONDA_ENV} /opt/conda/envs/${CONDA_ENV}
 COPY --from=build-env /tini /tini
 ENV PATH /opt/conda/envs/${CONDA_ENV}/bin:$PATH
+COPY ./DATA_CONFIG /usr/local/lib/python2.7/site-packages/checkm/
 
 # singularity doesn't use the -s flag, and that causes warnings
 ENTRYPOINT ["/tini", "-s", "--"]
