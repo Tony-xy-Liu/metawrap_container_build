@@ -36,16 +36,21 @@ case $1 in
             /bin/bash
     ;;
     -t)
-        #
-        # scratch space for testing stuff
-        #
-        cd $HERE/src
-        # # python -m simple_meta setup -ref $HERE/scratch/test1/ref -c docker
-        # python -m simple_meta run -ref $HERE/scratch/res -i SRR19573024 -o $HERE/scratch/test2/ws -t 16
-        # # --mock
-
-        # python -m simple_meta setup -ref $HERE/scratch/res -c singularity
-        python -m simple_meta run -r $HERE/scratch/res -i SRR19573024 -o $HERE/scratch/test3/ws -t 14
+        PYTHONPATH=""
+        
+        # 3 binds
+        singularity exec -B $LX_REF/checkm_src:/usr/local/lib/python2.7/site-packages/checkm,$LX_REF/checkm_data_2015_01_16:/checkm_db,./:/ws \
+            $LX_REF/metawrap.sif metaWRAP binning -t 16 -m 60 --maxbin2 --metabat2 --concoct \
+            -a /ws/metagenomic_assembly--9fb17d/SRR5326368.asm.fa \
+            -o /ws/metagenomic_binning--88f730/SRR5326368_metawrap \
+            --single-end /ws/metagenomic_binning--88f730/temp/f778aa.SRR5326368.fastq
+        
+        # 3 binds
+        singularity exec -B $LX_REF/checkm_src:/usr/local/lib/python2.7/site-packages/checkm,$LX_REF/checkm_data_2015_01_16:/checkm_db,./:/ws \
+            $LX_REF/metawrap.sif metaWRAP bin_refinement -t 16 -m 60 --quick -c 50 -x 10 \
+            -A /ws/metagenomic_binning--7f2ea2/SRR6484432_metawrap/maxbin2_bins \
+            -B /ws/metagenomic_binning--7f2ea2/SRR6484432_metawrap/concoct_bins \
+            -o /ws/metagenomic_binning--7f2ea2/SRR6484432_metawrap_refine
     ;;
     *)
         echo "bad option"
